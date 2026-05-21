@@ -1,0 +1,40 @@
+# When a versioned release is published (e.g. tag `v0.1.0`), move/create the
+# matching major-version tag (e.g. `v0`) so users can pin to `@v0` and follow
+# non-breaking updates automatically.
+name: Update major-version tag
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  retag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Compute major tag
+        id: major
+        run: |
+          full="${{ github.event.release.tag_name }}"
+          if [[ ! "$full" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Release tag '$full' is not in the form vX.Y.Z; skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          major="${full%%.*}"
+          echo "tag=$major" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse "$full"^{commit})" >> "$GITHUB_OUTPUT"
+
+      - name: Move major tag
+        if: steps.major.outputs.skip != 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git tag -f "${{ steps.major.outputs.tag }}" "${{ steps.major.outputs.sha }}"
+          git push origin -f "${{ steps.major.outputs.tag }}"

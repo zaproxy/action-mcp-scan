@@ -1,0 +1,36 @@
+{
+  "name": "action-mcp-scan",
+  "version": "0.1.0",
+  "description": "ZAP MCP scan action",
+  "main": "index.js",
+  "scripts": {
+    "package": "ncc build index.js -o dist --target es2024 && cp plan-template.yaml dist/"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zaproxy/action-mcp-scan.git"
+  },
+  "keywords": [
+    "GitHub",
+    "Actions",
+    "ZAP",
+    "MCP",
+    "Model Context Protocol",
+    "DAST"
+  ],
+  "author": "ZAP Team",
+  "bugs": {
+    "url": "https://github.com/zaproxy/action-mcp-scan/issues"
+  },
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/exec": "^1.1.1",
+    "@zaproxy/actions-common-scans": "^1.4.0"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.1"
+  }
+}

@@ -1,0 +1,49 @@
+name: 'ZAP MCP Scan'
+description: 'Scans an MCP (Model Context Protocol) server with the ZAP Automation Framework.'
+branding:
+  icon: 'zap'
+  color: 'blue'
+inputs:
+  token:
+    description: 'GitHub Token to create issues in the repository'
+    required: false
+    default: ${{ github.token }}
+  target:
+    description: 'Target MCP server URL, e.g. https://example.com/mcp.'
+    required: true
+  security_key:
+    description: 'Optional value sent in the Authorization header to the MCP server. Treat as a secret.'
+    required: false
+  docker_name:
+    description: 'The ZAP Docker image to be used.'
+    required: true
+    default: 'ghcr.io/zaproxy/zaproxy:stable'
+  docker_env_vars:
+    description: 'Additional environment variables (one per line) to pass to the ZAP Docker container.'
+    required: false
+    default: ''
+  rules_file_name:
+    description: 'Relative path of the ZAP rules configuration file (TSV) used to ignore alerts.'
+    required: false
+  cmd_options:
+    description: 'Additional command line options to start ZAP with.'
+    required: false
+  issue_title:
+    description: 'The title for the GitHub issue to be created.'
+    required: false
+    default: 'ZAP MCP Scan Report'
+  fail_action:
+    description: 'Fail the workflow if ZAP identifies any alerts during the scan.'
+    required: false
+    default: false
+  allow_issue_writing:
+    description: 'File the report as a GitHub issue using the `issue_title` input.'
+    required: false
+    default: true
+  artifact_name:
+    description: 'The name of the artifact that contains the ZAP reports.'
+    required: false
+    default: 'zap_mcp_scan'
+runs:
+  using: 'node24'
+  main: 'dist/index.js'

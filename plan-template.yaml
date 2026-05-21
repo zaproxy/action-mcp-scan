@@ -1,0 +1,47 @@
+---
+env:
+  contexts:
+    - name: mcp
+      urls:
+        - "{{MCP_TARGET}}"
+  parameters:
+    failOnError: true
+    progressToStdout: true
+
+jobs:
+
+  - type: mcp-import
+    parameters:
+      serverUrl: "{{MCP_TARGET}}"
+      securityKey: "${MCP_SECURITY_KEY}"
+
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 5
+
+  - type: activeScan
+    parameters:
+      context: mcp
+      policy: API
+
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 5
+
+  - type: report
+    parameters:
+      template: traditional-json
+      reportDir: /zap/wrk/
+      reportFile: report_json
+
+  - type: report
+    parameters:
+      template: traditional-html
+      reportDir: /zap/wrk/
+      reportFile: report_html
+
+  - type: report
+    parameters:
+      template: traditional-md
+      reportDir: /zap/wrk/
+      reportFile: report_md
